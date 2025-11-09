@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace FibonacciSphere
@@ -10,7 +12,7 @@ namespace FibonacciSphere
         public enum ConnectionMethod
         {
             Delaunay,
-            PrimeIntervals
+            Parastichy // PrimeIntervals
         }
         
         /// <summary>
@@ -19,7 +21,7 @@ namespace FibonacciSphere
         /// <param name="config">configuration data for the sphere, including radius and number of points</param>
         /// <param name="connectionMethod">method used for linking points on the sphere</param>
         /// <returns></returns>
-        public static SphereData Generate(SphereConfig config, ConnectionMethod connectionMethod = ConnectionMethod.Delaunay)
+        public static SphereData Generate(SphereConfig config, ConnectionMethod connectionMethod = ConnectionMethod.Parastichy)
         {
             SphereData data = new SphereData(GeneratePointsOfFibonacciSphere(config));
 
@@ -27,9 +29,9 @@ namespace FibonacciSphere
             {
                 // ConnectPointsWithDelaunay(ref points);
             }
-            else if (connectionMethod == ConnectionMethod.PrimeIntervals)
+            else if (connectionMethod == ConnectionMethod.Parastichy)
             {
-                // points = ConnectPointsWithPrimeIntervals(points);
+                ConnectPointsWithParastichy(data);
             }
             
             
@@ -124,10 +126,32 @@ namespace FibonacciSphere
             return new Vector2(point.x, point.z) / denominator;
         }
 
-        private static void ConnectPointsWithPrimeIntervals(Vector3[] points)
+        private static void ConnectPointsWithParastichy(SphereData data)
         {
-            // --- find 3 prime intervals with near points ---
-            
+            // --- connect spirals according to each cutoff ---
+            for (int c = 0; c < ParastichyConstants.Cutoffs.Length; c++)
+            {
+                Debug.Log($"Connecting points with ParastichyConstants.Cutoffs[{c}]");
+                int previousCutoff = c > 0 ? ParastichyConstants.Cutoffs[c - 1] : 0;
+                int nextCutoff = ParastichyConstants.Cutoffs[c];
+                
+                for (int i = 0; i < nextCutoff; i++)
+                {
+                    // uncomment this if ParastichyConstants.Intervals is changed to be a 2D array
+                    // var intervals = new ArraySegment<int>(ParastichyConstants.Intervals, i * 3, 3); 
+                    foreach (var interval in ParastichyConstants.Intervals[c])
+                    {
+                        for (int j = previousCutoff + interval; j < nextCutoff; j += interval)
+                        {
+                            if (!data.Connections.ContainsKey(j))
+                            {
+                                data.Connections.Add(j, new HashSet<int>());
+                            }
+                            data.Connections[j].Add(i);
+                        }
+                    }
+                }
+            }
         }
     }
 }

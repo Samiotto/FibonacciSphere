@@ -58,14 +58,22 @@ namespace FibonacciSphere
                     }
                 }
                 
+                // draw connections
+                Gizmos.color = Color.darkCyan;
+                if (data.Connections.ContainsKey(i))
+                {
+                    foreach (var connection in data.Connections[i])
+                    {
+                        Gizmos.DrawLine(data.Points[connection], point);
+                    }
+                }
+                
+                
                 Gizmos.DrawSphere(point, pointSize);
                 i++;
             }
         }
 
-        private void OnValidate()
-        {
-            //Draw(_data);
-        }
+        
     }
 }
