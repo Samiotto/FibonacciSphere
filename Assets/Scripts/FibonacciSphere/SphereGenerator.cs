@@ -128,27 +128,52 @@ namespace FibonacciSphere
 
         private static void ConnectPointsWithParastichy(SphereData data)
         {
+            int pointCount = data.Count;
+
+            // Ensure every point index has an entry to prevent key lookups from failing
+            for (int i = 0; i < pointCount; i++)
+            {
+                if (!data.Connections.ContainsKey(i))
+                {
+                    data.Connections[i] = new HashSet<int>();
+                }
+            }
+
             // --- connect spirals according to each cutoff ---
             for (int c = 0; c < ParastichyConstants.Cutoffs.Length; c++)
             {
+                // Safety: guard against mismatched intervals array
+                if (c >= ParastichyConstants.Intervals.Length) break;
+
                 Debug.Log($"Connecting points with ParastichyConstants.Cutoffs[{c}]");
                 int previousCutoff = c > 0 ? ParastichyConstants.Cutoffs[c - 1] : 0;
                 int nextCutoff = ParastichyConstants.Cutoffs[c];
-                
-                for (int i = 0; i < nextCutoff; i++)
+
+                // Clamp to actual number of points
+                int rangeStart = Mathf.Clamp(previousCutoff, 0, pointCount);
+                int rangeEnd = Mathf.Clamp(nextCutoff, 0, pointCount);
+                if (rangeStart >= rangeEnd) continue;
+
+                foreach (var interval in ParastichyConstants.Intervals[c])
                 {
-                    // uncomment this if ParastichyConstants.Intervals is changed to be a 2D array
-                    // var intervals = new ArraySegment<int>(ParastichyConstants.Intervals, i * 3, 3); 
-                    foreach (var interval in ParastichyConstants.Intervals[c])
+                    if (interval <= 0) continue; // ignore invalid intervals
+
+                    // Find the first index in [rangeStart, rangeEnd) that lies on the interval grid
+                    int start = rangeStart + ((interval - (rangeStart % interval)) % interval);
+
+                    // Chain connections along successive multiples within the range
+                    int prev = -1;
+                    for (int idx = start; idx < rangeEnd; idx += interval)
                     {
-                        for (int j = previousCutoff + interval; j < nextCutoff; j += interval)
+                        if (prev >= rangeStart)
                         {
-                            if (!data.Connections.ContainsKey(j))
-                            {
-                                data.Connections.Add(j, new HashSet<int>());
-                            }
-                            data.Connections[j].Add(i);
+                            // Store neighbor under the current index so the visualizer can draw
+                            data.Connections[idx].Add(prev);
+
+                            // If bidirectional edges are desired, also connect the previous to current:
+                            data.Connections[prev].Add(idx);
                         }
+                        prev = idx;
                     }
                 }
             }

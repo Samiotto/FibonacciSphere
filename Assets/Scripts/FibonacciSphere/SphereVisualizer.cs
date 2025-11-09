@@ -58,6 +58,8 @@ namespace FibonacciSphere
                     }
                 }
                 
+                Gizmos.DrawSphere(point, pointSize);
+                
                 // draw connections
                 Gizmos.color = Color.darkCyan;
                 if (data.Connections.ContainsKey(i))
@@ -68,8 +70,6 @@ namespace FibonacciSphere
                     }
                 }
                 
-                
-                Gizmos.DrawSphere(point, pointSize);
                 i++;
             }
         }
