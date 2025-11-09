@@ -158,22 +158,26 @@ namespace FibonacciSphere
                 {
                     if (interval <= 0) continue; // ignore invalid intervals
 
-                    // Find the first index in [rangeStart, rangeEnd) that lies on the interval grid
-                    int start = rangeStart + ((interval - (rangeStart % interval)) % interval);
-
-                    // Chain connections along successive multiples within the range
-                    int prev = -1;
-                    for (int idx = start; idx < rangeEnd; idx += interval)
+                    // For each residue class r in [0, interval), build its chain within the range
+                    for (int r = 0; r < interval; r++)
                     {
-                        if (prev >= rangeStart)
-                        {
-                            // Store neighbor under the current index so the visualizer can draw
-                            data.Connections[idx].Add(prev);
+                        // First index in [rangeStart, rangeEnd) with idx % interval == r
+                        int offset = (r - (rangeStart % interval) + interval) % interval;
+                        int first = rangeStart + offset;
+                        if (first >= rangeEnd) continue;
 
-                            // If bidirectional edges are desired, also connect the previous to current:
-                            data.Connections[prev].Add(idx);
+                        int prev = -1;
+                        for (int idx = first; idx < rangeEnd; idx += interval)
+                        {
+                            if (prev >= rangeStart)
+                            {
+                                // Store neighbor under the current index so the visualizer can draw
+                                data.Connections[idx].Add(prev);
+                                // If bidirectional edges are desired, also connect the previous to current:
+                                // data.Connections[prev].Add(idx);
+                            }
+                            prev = idx;
                         }
-                        prev = idx;
                     }
                 }
             }

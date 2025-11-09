@@ -6,7 +6,7 @@ namespace FibonacciSphere
     {
         public static int[] Cutoffs = new int[]
         {
-            44, 710, 208_000 // TODO: 208,000 is approximate, adjust later
+            8, 13, 21 // TODO: 208,000 is approximate, adjust later
         };
         public static int[][] Intervals = new int[3][]
         {
