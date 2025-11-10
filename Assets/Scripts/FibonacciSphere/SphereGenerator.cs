@@ -68,7 +68,7 @@ namespace FibonacciSphere
             Vector3[] points = new Vector3[config.Resolution];
             
             // generate points
-            float thetaStep = Mathf.PI * (3f - Mathf.Sqrt(5f)); // golden ratio
+            float thetaStep = Mathf.PI * (3f - Mathf.Sqrt(5f)); // golden angle
             for (int i = 0; i < config.Resolution; i++)
             {
                 // place point on the y-axis
@@ -77,7 +77,7 @@ namespace FibonacciSphere
                 
                 // push points out along the x-z plane
                 float radius = Mathf.Sqrt(1f - y * y);
-                float phi = i * thetaStep; // rotate points by golden ratio
+                float phi = i * thetaStep; // rotate points by golden angle
                 points[i].x = radius * Mathf.Cos(phi);
                 points[i].z = radius * Mathf.Sin(phi);
                 points[i].y = y;
