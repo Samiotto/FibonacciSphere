@@ -463,7 +463,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FibonacciSphere.SphereVisualizer
   pointSize: 0.05
-  intervals: 020000000300000005000000
+  intervals: 220000000d00000015000000
   residuals: 000000000000000000000000
   minDistances:
   - 0
@@ -482,7 +482,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SphereRunner
   radius: 1
-  resolution: 99
+  resolution: 287
   seed: 0
   _sphereVisualizer: {fileID: 840273741}
 --- !u!4 &840273743

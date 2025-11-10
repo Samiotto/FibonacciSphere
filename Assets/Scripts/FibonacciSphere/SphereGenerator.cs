@@ -163,18 +163,19 @@ namespace FibonacciSphere
                     {
                         // First index in [rangeStart, rangeEnd) with idx % interval == r
                         int offset = (r - (rangeStart % interval) + interval) % interval;
-                        int first = rangeStart + offset;
-                        if (first >= rangeEnd) continue;
-
-                        int prev = -1;
-                        for (int idx = first; idx < rangeEnd; idx += interval)
+                        int first = rangeStart + r;
+                        int prev = first;
+                        first += interval;
+                        if (first >= rangeEnd) break;
+                        
+                        for (int idx = prev; idx < Mathf.Clamp(rangeEnd + interval, 0, pointCount); idx += interval)
                         {
                             if (prev >= rangeStart)
                             {
                                 // Store neighbor under the current index so the visualizer can draw
                                 data.Connections[idx].Add(prev);
                                 // If bidirectional edges are desired, also connect the previous to current:
-                                // data.Connections[prev].Add(idx);
+                                data.Connections[prev].Add(idx);
                             }
                             prev = idx;
                         }
