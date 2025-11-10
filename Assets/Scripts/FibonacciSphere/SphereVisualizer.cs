@@ -7,6 +7,7 @@ namespace FibonacciSphere
     public sealed class SphereVisualizer : MonoBehaviour
     {
         [SerializeField] private float pointSize = 0.05f;
+        [SerializeField] private int highlightToIndex = 0;
         [SerializeField] private int[] intervals = new int[3];
         [SerializeField] private int[] residuals = new int[3];
         [SerializeField] private float[] minDistances = new float[3];
@@ -58,6 +59,7 @@ namespace FibonacciSphere
                     }
                 }
                 
+                if (i < highlightToIndex) Gizmos.color = Color.darkCyan;
                 Gizmos.DrawSphere(point, pointSize);
                 
                 // draw connections
