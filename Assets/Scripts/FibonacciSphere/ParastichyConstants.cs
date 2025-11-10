@@ -7,6 +7,12 @@
  * previous set, likely because as we reach larger indeces, the smaller intervals get
  * more "stretched" out, and so a larger interval is needed to find closer points.
  *
+ * Ok before I forget I need to record this, I just realized that I was thinking about Parastichies/Intervals
+ * in a way more complicated way than I needed to. the parastichies are literally just the fibonacci numbers.
+ * I also think this needs to be rewritten so that instead of using sets of 3 intervals, we instead use a moving
+ * window where we apply the parastichies accross 3 cutoff ranges at a time, this might help with some of
+ * the cutoff boundaries where some connections appear to get skipped.
+ *
  * I've been reading through this paper on parastichy patterns in sunflowers and pineapples
  * by Riichirou Negishi, I've specifically been inspired by them to use  the fibonacci numbers used
  * as cutoffs
@@ -31,6 +37,11 @@ namespace FibonacciSphere
             new int[] {21, 34,13}, 
             new int[] {21, 34, 55}
         };
-}
+
+        public static int[] Parastichies = new int[]
+        {
+            2, 3, 5, 8, 13, 21, 34, 55
+        };
+    }
 
 }
