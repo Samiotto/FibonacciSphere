@@ -139,13 +139,27 @@ namespace FibonacciSphere
                 }
             }
 
+
+            FibonacciPattern fibonacciPattern = new FibonacciPattern();
+            Debug.Log($"Starting values in fibonacci {fibonacciPattern.ToString()}");
+            fibonacciPattern.GenerateUntilGreaterThan(500);
+            Debug.Log($"Fibonacci sequence computed past 500 {fibonacciPattern.ToString()}");
+            int nextNumber = fibonacciPattern[fibonacciPattern.Count];
+            Debug.Log($"Next in the sequence: {nextNumber}");
+            
+            // for every cutoff range
+            for (int rangeStartIndex = 0; rangeStartIndex < ParastichyConstants.Cutoffs.Length; rangeStartIndex++)
+            {
+                
+            }
+
             // --- connect spirals according to each cutoff ---
             for (int c = 0; c < ParastichyConstants.Cutoffs.Length; c++)
             {
                 // Safety: guard against mismatched intervals array
                 if (c >= ParastichyConstants.Intervals.Length) break;
 
-                Debug.Log($"Connecting points with ParastichyConstants.Cutoffs[{c}]");
+                // Debug.Log($"Connecting points with ParastichyConstants.Cutoffs[{c}]");
                 int previousCutoff = c > 0 ? ParastichyConstants.Cutoffs[c - 1] : 0;
                 int nextCutoff = ParastichyConstants.Cutoffs[c];
 

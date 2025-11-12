@@ -463,7 +463,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FibonacciSphere.SphereVisualizer
   pointSize: 0.05
-  intervals: 220000000d00000015000000
+  highlightToIndex: 0
+  intervals: 080000000d00000015000000
   residuals: 000000000000000000000000
   minDistances:
   - 0
