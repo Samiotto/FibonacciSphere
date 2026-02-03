@@ -31,7 +31,9 @@ namespace FibonacciSphere
             }
             else if (connectionMethod == ConnectionMethod.Parastichy)
             {
-                ConnectPointsWithParastichy(data);
+                // ConnectPointsWithParastichy(data);
+                // ConnectPointsWithParastichyMovingWindow(data);
+                ConnectPointsUsingParastichyPatterns(data);
             }
             
             
@@ -126,6 +128,122 @@ namespace FibonacciSphere
             return new Vector2(point.x, point.z) / denominator;
         }
 
+        private static void ConnectPointsUsingParastichyPatterns(SphereData data)
+        {
+            ConnectPointsOneParastichyAtATime(data);
+            // ConnectPointsWithParastichyMovingWindow(data);
+        }
+
+        private static void ConnectPointsOneParastichyAtATime(SphereData data)
+        {
+            int pointCount = data.Count;
+
+            // Ensure every point index has an entry to prevent key lookups from failing
+            for (int i = 0; i < pointCount; i++)
+            {
+                if (!data.Connections.ContainsKey(i))
+                {
+                    data.Connections[i] = new HashSet<int>();
+                }
+            }
+            
+            // generate all necessary numbers in the fibonacci pattern
+            FibonacciPattern fibonacciPattern = new FibonacciPattern();
+            Debug.Log($"Starting values in fibonacci {fibonacciPattern.ToString()}");
+            fibonacciPattern.GenerateUntilGreaterThan(pointCount);
+            Debug.Log($"Fibonacci sequence computed past {pointCount} {fibonacciPattern.ToString()}");
+            int nextNumber = fibonacciPattern[fibonacciPattern.Count];
+            Debug.Log($"Next in the sequence: {nextNumber}");
+            
+            // calculate number of parastichies needed
+            int numParastichies = 0;
+            while (pointCount > fibonacciPattern[numParastichies * 2])
+            {
+                numParastichies++;
+            }
+
+            numParastichies += 2;
+            
+            Debug.Log($"Number of parastichies {numParastichies}");
+            
+            // loop through every parastichy, connect all points that are that parastichy away within its interval
+            for (int p = 0; p <= numParastichies; p++)
+            {
+                Debug.Log($"Working through parastichy {numParastichies} which is a value of {fibonacciPattern[p]}");
+                for (int i = p * 2 - 6; p < p * 2; p++)
+                {
+                    Debug.Log($"i: {i}");
+                    if (i < 0) continue;
+                    if (i + p > pointCount) break;
+                    data.Connections[i].Add(fibonacciPattern[p] + i);
+                }
+            }
+        }
+
+        private static void ConnectPointsWithParastichyMovingWindow(SphereData data)
+        {
+            int pointCount = data.Count;
+
+            // Ensure every point index has an entry to prevent key lookups from failing
+            for (int i = 0; i < pointCount; i++)
+            {
+                if (!data.Connections.ContainsKey(i))
+                {
+                    data.Connections[i] = new HashSet<int>();
+                }
+            }
+            
+            // generate all necessary numbers in the fibonacci pattern
+            FibonacciPattern fibonacciPattern = new FibonacciPattern();
+            Debug.Log($"Starting values in fibonacci {fibonacciPattern.ToString()}");
+            fibonacciPattern.GenerateUntilGreaterThan(pointCount);
+            Debug.Log($"Fibonacci sequence computed past {pointCount} {fibonacciPattern.ToString()}");
+            int nextNumber = fibonacciPattern[fibonacciPattern.Count];
+            Debug.Log($"Next in the sequence: {nextNumber}");
+
+            // calculate the number of intervals needed
+            int numIntervals;
+            for (numIntervals = 0; numIntervals < fibonacciPattern.Count; numIntervals++)
+            {
+                if (pointCount < fibonacciPattern[(numIntervals+1)*2]) break;
+            }
+            
+            Debug.Log($"Number of intervals: {numIntervals}");
+            Debug.Log($"Last end of interval should be {fibonacciPattern[(numIntervals+1)*2]}");
+            // loop through every interval
+            for (int interval = 0; interval < numIntervals; interval++)
+            {
+                Debug.Log($"Starting interval {interval}");
+                // every interval starts and ends between every other point in the fibonacci sequence
+                // (ex. start 0, skip 1, end 1, then start 1, skip 2, end 3, then start 3, skip 5, end 8)
+                int start = fibonacciPattern[(interval) * 2];
+                int end = fibonacciPattern[(interval + 1) * 2];
+                
+                Debug.Log($"Interval starts at {start} and ends at {end}");
+                Debug.Log($"We will use parastichies {fibonacciPattern[interval + 1]}, {fibonacciPattern[interval + 2]}, and {fibonacciPattern[interval + 3]}");
+
+                int CONNECTIONS_MADE = 0;
+                // connect points using a moving window of parastichies based on fibonacci sequence
+                // (i.e. 1,1,2 then 1,2,3 then 2,3,5 etc.) while looping through every point in the interval
+                for (int i = start; i <= end && i + interval + 1 < pointCount; i++)
+                {
+                    data.Connections[i].Add(fibonacciPattern[i + interval + 1]);
+                    CONNECTIONS_MADE++;
+                }
+                for (int i = start; i <= end && i + interval + 2 < pointCount; i++)
+                {
+                    data.Connections[i].Add(fibonacciPattern[i + interval + 2]);
+                    CONNECTIONS_MADE++;
+                }
+                for (int i = start; i <= end && i + interval + 3 < pointCount; i++)
+                {
+                    data.Connections[i].Add(fibonacciPattern[i + interval + 3]);
+                    CONNECTIONS_MADE++;
+                }
+                Debug.Log($"Made {CONNECTIONS_MADE} connections");
+            }
+        }
+
         private static void ConnectPointsWithParastichy(SphereData data)
         {
             int pointCount = data.Count;
@@ -138,14 +256,6 @@ namespace FibonacciSphere
                     data.Connections[i] = new HashSet<int>();
                 }
             }
-
-
-            FibonacciPattern fibonacciPattern = new FibonacciPattern();
-            Debug.Log($"Starting values in fibonacci {fibonacciPattern.ToString()}");
-            fibonacciPattern.GenerateUntilGreaterThan(500);
-            Debug.Log($"Fibonacci sequence computed past 500 {fibonacciPattern.ToString()}");
-            int nextNumber = fibonacciPattern[fibonacciPattern.Count];
-            Debug.Log($"Next in the sequence: {nextNumber}");
             
             // for every cutoff range
             for (int rangeStartIndex = 0; rangeStartIndex < ParastichyConstants.Cutoffs.Length; rangeStartIndex++)

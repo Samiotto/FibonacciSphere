@@ -60,6 +60,7 @@ namespace FibonacciSphere
                 }
                 
                 if (i < highlightToIndex) Gizmos.color = Color.darkCyan;
+                if (i == highlightToIndex) Gizmos.color = Color.aquamarine;
                 Gizmos.DrawSphere(point, pointSize);
                 
                 // draw connections

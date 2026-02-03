@@ -35,7 +35,7 @@ namespace FibonacciSphere
         public FibonacciPattern()
         {
             _sequence = new Dictionary<int, int>();
-            _sequence.Add(0, 1);
+            _sequence.Add(0, 0);
             _sequence.Add(1, 1);
         }
 
