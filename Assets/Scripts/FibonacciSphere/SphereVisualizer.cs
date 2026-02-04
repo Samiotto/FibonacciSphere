@@ -11,6 +11,10 @@ namespace FibonacciSphere
         [SerializeField] private int[] intervals = new int[3];
         [SerializeField] private int[] residuals = new int[3];
         [SerializeField] private float[] minDistances = new float[3];
+        [SerializeField] private int[] startPoints = new int[3];
+        [SerializeField] private int[] endPoints = new int[3];
+        [SerializeField] private float[] distances = new float[3];
+        
 
         //private SphereData _data;
         
@@ -32,30 +36,35 @@ namespace FibonacciSphere
             {
                 minDistances[j] = 2f;
             }
+
+            for (int d = 0; d < startPoints.Length && d < endPoints.Length && d < distances.Length; d++)
+            {
+                distances[d] = Vector3.Distance(data.Points[startPoints[d]], data.Points[endPoints[d]]);;
+            }
             
             Gizmos.color = Color.black;
             int i = 0;
             Vector3[] previousPrimeMultiplePoint = {Vector3.zero, Vector3.zero, Vector3.zero};
-            int[] previousSmallestDistancePointIndex = {0, 0, 0};
+            // int[] previousSmallestDistancePointIndex = {0, 0, 0};
             foreach (var point in data.Points)
             {
                 Gizmos.color = Color.black;
 
                 for (int j = 0; j < 3; j++)
                 {
-                    if (intervals[j] > 0 && i % intervals[j] == 0)
+                    if (intervals[j] > 0 && (i - residuals[j]) % intervals[j] == 0)
                     {
                         if (j == 0) Gizmos.color += Color.red;
                         else if (j == 1) Gizmos.color += Color.green;
                         else if (j == 2) Gizmos.color += Color.blue;
                         Gizmos.DrawLine(previousPrimeMultiplePoint[j], point);
-                        if (minDistances[j] > Vector3.Distance(data.Points[previousSmallestDistancePointIndex[j]], point))
-                        {
-                            minDistances[j] = Vector3.Distance(data.Points[previousSmallestDistancePointIndex[j]], point);
-                            residuals[j] = i - previousSmallestDistancePointIndex[j];
-                        }
+                        // if (minDistances[j] > Vector3.Distance(data.Points[previousSmallestDistancePointIndex[j]], point))
+                        // {
+                        //     minDistances[j] = Vector3.Distance(data.Points[previousSmallestDistancePointIndex[j]], point);
+                        //     residuals[j] = i - previousSmallestDistancePointIndex[j];
+                        // }
                         previousPrimeMultiplePoint[j] = point;
-                        previousSmallestDistancePointIndex[j] = i;
+                        // previousSmallestDistancePointIndex[j] = i;
                     }
                 }
                 

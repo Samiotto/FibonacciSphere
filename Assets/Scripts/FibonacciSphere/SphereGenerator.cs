@@ -71,10 +71,13 @@ namespace FibonacciSphere
             
             // generate points
             float thetaStep = Mathf.PI * (3f - Mathf.Sqrt(5f)); // golden angle
+            // points[0].x = 0;
+            // points[0].z = 0;
+            // points[0].y = -1;
             for (int i = 0; i < config.Resolution; i++)
             {
                 // place point on the y-axis
-                float t = n > 1 ? i / (n - 1f) : 0f; // step size
+                float t = n > 1 ? (i + 1) / (n - 1f) : 0f; // step size
                 float y = Mathf.Lerp(-1f, 1f, t); // place points along the y-axis
                 
                 // push points out along the x-z plane
@@ -120,6 +123,11 @@ namespace FibonacciSphere
             
             Debug.Log($"Number of parastichies {numParastichies}");
             
+            Queue<int> lastThreeEndings = new Queue<int>(3);
+            lastThreeEndings.Enqueue(0);
+            lastThreeEndings.Enqueue(0);
+            lastThreeEndings.Enqueue(0);
+            
             // loop through every parastichy, connect all points that are that parastichy away within its interval
             for (int p = 0; p <= numParastichies; p++)
             {
@@ -128,9 +136,32 @@ namespace FibonacciSphere
                     Debug.LogWarning($"trying to access fibonacci number outside of calculated range. p: {p}, p*2: {p * 2}, fibonacciPattern.Count: {fibonacciPattern.Count}");
                 }
 
-                int lowerIndex = (p * 2) - 6;
+                
+                
+                // int lowerIndex = (p * 2) - 7;
+                // int lowerIndex = p - 1;
+                int lowerIndex = lastThreeEndings.Dequeue();
                 if (lowerIndex < 0) lowerIndex = 0;
-                for (int i = fibonacciPattern[lowerIndex]; i < fibonacciPattern[p * 2] && i < pointCount; i++)
+                // int upperBound = (p * 2) - 1;
+                // int upperBound = p + 1;
+                int upperBound = lowerIndex + p + 1;
+                // if (upperBound == 0) upperBound++;
+                if (upperBound < 0) upperBound = 0;
+                
+                lastThreeEndings.Enqueue(upperBound);
+                
+                Debug.Log($"lower: {lowerIndex}, upper: {upperBound}, p: {p}");
+                // foreach ( int i in lastThreeEndings.ToList())
+                //     Debug.Log($"Queue: {i}, ");
+                int startPoint = fibonacciPattern[lowerIndex] - fibonacciPattern[p];
+                if (startPoint < 0)
+                {
+                    Debug.Log($"Starting point for {fibonacciPattern[p]} is negative, starting at 0");
+                    startPoint = 0;
+                }
+
+                int endPoint = fibonacciPattern[upperBound] - fibonacciPattern[p] - fibonacciPattern[p + 1];
+                for (int i = startPoint; i < endPoint && i < pointCount; i++)
                 {
                     if (i + p > pointCount)
                     {
@@ -141,8 +172,15 @@ namespace FibonacciSphere
 
                     if (i + fibonacciPattern[p] >= pointCount) break;
                     data.Connections[i].Add(fibonacciPattern[p] + i);
+                    data.Connections[fibonacciPattern[p] + i].Add(i);
                 }
             }
+
+            // data.Connections[0].Add(1);
+            // data.Connections[1].Add(2);
+            // data.Connections[0].Add(2);
+            // data.Connections[1].Add(3);
+            // data.Connections[2].Add(4);
         }
     }
 }
