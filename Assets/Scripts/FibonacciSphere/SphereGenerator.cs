@@ -163,12 +163,23 @@ namespace FibonacciSphere
             // loop through every parastichy, connect all points that are that parastichy away within its interval
             for (int p = 0; p <= numParastichies; p++)
             {
-                Debug.Log($"Working through parastichy {numParastichies} which is a value of {fibonacciPattern[p]}");
-                for (int i = p * 2 - 6; p < p * 2; p++)
+                if (p * 2 > fibonacciPattern.Count)
                 {
-                    Debug.Log($"i: {i}");
-                    if (i < 0) i = 0;
-                    if (i + p > pointCount) break;
+                    Debug.LogWarning($"trying to access fibonacci number outside of calculated range. p: {p}, p*2: {p * 2}, fibonacciPattern.Count: {fibonacciPattern.Count}");
+                }
+
+                int lowerIndex = (p * 2) - 6;
+                if (lowerIndex < 0) lowerIndex = 0;
+                for (int i = fibonacciPattern[lowerIndex]; i < fibonacciPattern[p * 2] && i < pointCount; i++)
+                {
+                    if (i + p > pointCount)
+                    {
+                        Debug.Log("i + p is greater than pointCount");
+                        Debug.Log($"i: {i} p: {p}");
+                        break;
+                    }
+
+                    if (i + fibonacciPattern[p] >= pointCount) break;
                     data.Connections[i].Add(fibonacciPattern[p] + i);
                 }
             }
