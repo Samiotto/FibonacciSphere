@@ -88,46 +88,6 @@ namespace FibonacciSphere
             return points;
         }
 
-        private static Vector3[] ConnectPointsWithDelaunay(Vector3[] points)
-        {
-            // --- stereographic projection with delaunay triangulation ---
-            // project points onto a plane
-            Plane plane = new Plane(Vector3.up, Vector3.zero);
-            Vector2[] projectedPoints = ProjectPointsToPlane(points, plane);
-            
-                
-            // use delaunay triangulation to connect points
-                
-                
-                
-            // project points back onto the sphere
-            
-            throw new NotImplementedException();
-        }
-
-        private static Vector2[] ProjectPointsToPlane(Vector3[] spherePoints, Plane plane)
-        {
-            Vector2[] projectedPoints = new Vector2[spherePoints.Length];
-            for (int i = 0; i < spherePoints.Length; i++)
-            {
-                projectedPoints[i] = ProjectPointToPlane(spherePoints[i], plane);
-            }
-            return projectedPoints;
-        }
-
-        private static Vector2 ProjectPointToPlane(Vector3 point, Plane plane, float epsilon = 1e-7f)
-        {
-            float denominator = 1f - point.y;
-            if (Mathf.Abs(denominator) < epsilon)
-            {
-                // approching infinity (denominator is almost 0) use epsilon instead
-                Vector2 direction = new Vector2(point.x, point.z).normalized;
-                return direction * (1f / epsilon);
-            }
-            
-            return new Vector2(point.x, point.z) / denominator;
-        }
-
         private static void ConnectPointsUsingParastichyPatterns(SphereData data)
         {
             int pointCount = data.Count;
